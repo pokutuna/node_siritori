@@ -39,16 +39,24 @@ app.listen(9393, function(){
 
 // socket.io
 var io = require('socket.io').listen(app);
+var count = 0;
+var lastWord = 'しりとり';
 
 io.sockets.on('connection', function(socket) {
   console.log('connect: ' + socket.id);
+  count++;
+  io.sockets.emit('users', { count: count });
+  socket.emit('word', { word: lastWord });
 
   socket.on('word', function(data) {
     console.log(data);
+    lastWord = data.word;
     io.sockets.emit('word', data);
   });
 
   socket.on('disconnect', function() {
     console.log('disconnect');
+    count--;
+    socket.broadcast.emit('users', { count: count });
   });
 });
