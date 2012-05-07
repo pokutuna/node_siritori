@@ -34,3 +34,21 @@ app.get('/', routes.index);
 app.listen(3000, function(){
   console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
 });
+
+
+
+// socket.io
+var io = require('socket.io').listen(app);
+
+io.sockets.on('connection', function(socket) {
+  console.log('connect: ' + socket.id);
+
+  socket.on('word', function(data) {
+    console.log(data);
+    io.sockets.emit('word', data);
+  });
+
+  socket.on('disconnect', function() {
+    console.log('disconnect');
+  });
+});
